@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn project_django.wsgi --log-file -
+web: gunicorn lokeswara-pbp-lab1.wsgi --log-file -
