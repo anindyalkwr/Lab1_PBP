@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+  function get_data() {
+      $("button.putData").click(function(){
+        $("tr.thisTr").html('');
+        $.get('/wishlist/json/', function (data) {
+            data.map((singleData) =>
+            $("table.table-striped").append(`
+            <tr class = "thisTr">
+            <td>${singleData.fields.nama_barang}</td>
+            <td>${singleData.fields.harga_barang}</td>
+            <td>${singleData.fields.deskripsi}</td>
+            </tr>`)
+            );
+        });
+      });
+    }
+
+    $(document).ready( function() {
+            get_data();
+            $("button.add_barangWishlist").click(function() {
+                $.post(
+                    "/wishlist/ajax/submit/", 
+                    {
+                    nama_barang: document.getElementById('nama_barang').value,
+                    harga_barang: document.getElementById('harga_barang').value,
+                    deskripsi: document.getElementById('deskripsi').value,
+                    }, 
+                    function(_){
+                        get_data();
+                    });
+            });
+        }); 
+</script>
+{% endblock meta %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- Container wrapper -->
+  <div class="container">
+    <!-- Navbar brand -->
+    <a class="navbar-brand me-2" href="https://mdbgo.com/">
+      <img
+        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+        height="16"
+        alt="MDB Logo"
+        loading="lazy"
+        style="margin-top: -1px;"
+      />
+    </a>
+
+    <!-- Toggle button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarButtonsExample"
+      aria-controls="navbarButtonsExample"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarButtonsExample">
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">{{nama}} - {{npm}}</a>
+        </li>
+      </ul>
+      <!-- Left links -->
+
+      <div class="d-flex align-items-center">
+        <button><a href="{% url 'wishlist:logout' %}">Logout</a></button>
+        <p> </p>
+        <a
+          class="btn btn-dark px-3"
+          href="https://github.com/anindyalkwr"
+          role="button"
+          ><i class="fab fa-github"></i
+        ></a>
+      </div>
+    </div>
+    <!-- Collapsible wrapper -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+  
+
+<table class="table table-striped">
+    <tr>
+        <th>Nama Barang</th>
+        <th>Harga Barang</th>
+        <th>Deskripsi</th>
+    </tr>
+</table>
+
+<button class = "putData">Get JSON data</button>
+
+<form method="POST" action="">
+  {% csrf_token %}
+  <input type="text" id="nama_barang" name="nama_barang" placeholder="Nama Barang" />
+  <input type="text" id="harga_barang" name="harga_barang" placeholder="Harga Barang" /> <br>
+
+  <textarea id="deskripsi" name="deskripsi" rows="4" cols="50" placeholder="Deskripsi"></textarea>
+  <button class="add_barangWishlist" type="button">
+    <input type="submit" name="submit" value="Submit">
+  </button>
+</form>
+
+
+</body>
+</html>
+
+
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+{% endblock content %}

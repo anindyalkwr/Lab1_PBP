@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -21,6 +22,14 @@ def show_wishlist(request):
     }
     return render(request, "wishlist.html", context)
 
+def show_ajax(request):
+    context = {
+    'nama': 'Anindya Lokeswara',
+    'npm': 210663696,
+    'last_login': request.COOKIES['last_login']
+    }
+    return render(request, "wishlist_ajax.html", context)
+
 def show_xml(request):
     data = BarangWishlist.objects.all()
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
@@ -39,7 +48,6 @@ def show_xml_by_id(request, id):
 
 def register(request):
     form = UserCreationForm()
-
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -49,6 +57,20 @@ def register(request):
     
     context = {'form':form}
     return render(request, 'register.html', context)
+
+def add_barangWishlist(request):    
+    if request.method == 'POST':
+        nama_barang = request.POST.get('nama_barang')
+        harga_barang = request.POST.get('harga_barang')
+        deskripsi = request.POST.get('deskripsi')
+        barang = BarangWishlist.objects.create(nama_barang = nama_barang, harga_barang = harga_barang, deskripsi = deskripsi)
+        barang.save()
+    context = {
+    'nama': 'Anindya Lokeswara',
+    'npm': 210663696,
+    'last_login': request.COOKIES['last_login']
+    }
+    return render(request, "wishlist_ajax.html", context)
 
 def login_user(request):
     if request.method == 'POST':
